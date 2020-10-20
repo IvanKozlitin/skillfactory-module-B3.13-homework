@@ -15,6 +15,7 @@ class HTML:
 
     def __iadd__(self, other):
         self.html_code += str(other)
+        
 
 class TopLevelTag:
     """Класс TopLevelTag"""
@@ -37,19 +38,41 @@ class TopLevelTag:
         return "<{tag}>\n{html_code}\n</{tag}>".format(tag=self.tag, html_code=self.html_code)
 
 class Tag:
-    pass
+    """Класс Tag"""
+    def __init__(self, tag, is_single=False, **attr):
+        self.tag = tag
+        self.html_code = ""
+        self.text = ""
+        self.attributes = attr
+        self.is_single = is_single
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    # def __iadd__(self, other):
+    #     self.html_code += str(other)
+
+    def __str__(self):
+        # attrs = []
+        # for attribute, value in self.attributes.items():
+        #     attrs.append('%s="%s"' % (attribute, value))
+        # attrs = " ".join(attrs)
+        return "Проверка"
+
 
 # Исходник
 
 with HTML(output="test.html") as doc:
-    pass
     with TopLevelTag("head") as head:
-    #     with Tag("title") as title:
-    #         title.text = "hello"
-    #         head += title
+        # with Tag("title") as title:
+        #     title.text = "hello"
+        #     head += title
         doc += head
 
-    # with TopLevelTag("body") as body:
+    with TopLevelTag("body") as body:
     #     with Tag("h1", klass=("main-text",)) as h1:
     #         h1.text = "Test"
     #         body += h1
@@ -64,4 +87,4 @@ with HTML(output="test.html") as doc:
 
     #         body += div
 
-    #     doc += body
+        doc += body
