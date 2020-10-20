@@ -9,24 +9,45 @@ class HTML:
         return self
 
     def __exit__(self, type, value, traceback):
-        with open(self.output, 'w') as result_file:
+        with open(self.output, 'w', encoding="utf-8") as result_file:
             self.html_code = "<{tag}>\n{html_code}\n</{tag}>".format(tag=self.tag, html_code=self.html_code)
             result_file.write(self.html_code)
 
     def __iadd__(self, other):
-        self.html_code += other.html_code
+        self.html_code += str(other)
 
+class TopLevelTag:
+    """Класс TopLevelTag"""
+    def __init__(self, tag):
+        self.tag = tag
+        self.html_code = ""
+        self.attributes = {}
+        self.toplevel = True
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+    def __iadd__(self, other):
+        self.html_code += str(other)
+
+    def __str__(self):
+        return "<{tag}>\n{html_code}\n</{tag}>".format(tag=self.tag, html_code=self.html_code)
+
+class Tag:
+    pass
 
 # Исходник
 
 with HTML(output="test.html") as doc:
     pass
-    # with TopLevelTag("head") as head:
+    with TopLevelTag("head") as head:
     #     with Tag("title") as title:
     #         title.text = "hello"
     #         head += title
-    #     doc += head
+        doc += head
 
     # with TopLevelTag("body") as body:
     #     with Tag("h1", klass=("main-text",)) as h1:
