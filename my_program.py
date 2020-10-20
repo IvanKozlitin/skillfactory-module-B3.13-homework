@@ -15,6 +15,7 @@ class HTML:
 
     def __iadd__(self, other):
         self.html_code += str(other)
+        return self
         
 
 class TopLevelTag:
@@ -33,9 +34,10 @@ class TopLevelTag:
 
     def __iadd__(self, other):
         self.html_code += str(other)
+        return self
 
     def __str__(self):
-        return "<{tag}>\n{html_code}\n</{tag}>".format(tag=self.tag, html_code=self.html_code)
+        return "<{tag}>\n{html_code}\n</{tag}>\n".format(tag=self.tag, html_code=self.html_code)
 
 class Tag:
     """Класс Tag"""
@@ -44,6 +46,7 @@ class Tag:
         self.html_code = ""
         self.text = ""
         self.attributes = attr
+        print(self.attributes)
         self.is_single = is_single
 
     def __enter__(self):
@@ -52,39 +55,46 @@ class Tag:
     def __exit__(self, type, value, traceback):
         pass
 
-    # def __iadd__(self, other):
-    #     self.html_code += str(other)
+    def __iadd__(self, other):
+        self.html_code += str(other)
+        return self
 
     def __str__(self):
-        # attrs = []
-        # for attribute, value in self.attributes.items():
-        #     attrs.append('%s="%s"' % (attribute, value))
-        # attrs = " ".join(attrs)
-        return "Проверка"
+        attrs = []
+        for attribute, value in self.attributes.items():
+            attrs.append('%s="%s"' % (attribute, value))
+        attrs = " ".join(attrs)
+        # Решить вопрос с классами
+
+        if self.is_single == True:
+            result_html = "<{tag} {attrs}/>\n".format(tag=self.tag, attrs=attrs, text=self.text, html_code=self.html_code)
+        else:
+            result_html = "<{tag} {attrs}>\n{text}\n{html_code}\n</{tag}>\n".format(tag=self.tag, attrs=attrs, text=self.text, html_code=self.html_code)
+        return result_html
 
 
 # Исходник
 
 with HTML(output="test.html") as doc:
     with TopLevelTag("head") as head:
-        # with Tag("title") as title:
-        #     title.text = "hello"
-        #     head += title
+        with Tag("title") as title:
+            title.text = "hello"
+            head += title
         doc += head
 
     with TopLevelTag("body") as body:
-    #     with Tag("h1", klass=("main-text",)) as h1:
-    #         h1.text = "Test"
-    #         body += h1
+        with Tag("h1", klass=("main-text",)) as h1:
+            h1.text = "Test"
+            body += h1
 
-    #     with Tag("div", klass=("container", "container-fluid"), id="lead") as div:
-    #         with Tag("p") as paragraph:
-    #             paragraph.text = "another test"
-    #             div += paragraph
+        with Tag("div", klass=("container", "container-fluid"), id="lead") as div:
+            with Tag("p") as paragraph:
+                paragraph.text = "another test"
+                div += paragraph
 
-    #         with Tag("img", is_single=True, src="/icon.png" data_image="responsive") as img:
-    #             div += img
+            with Tag("img", is_single=True, src="/icon.png", data_image="responsive") as img:
+                div += img
 
-    #         body += div
+            body += div
 
         doc += body
