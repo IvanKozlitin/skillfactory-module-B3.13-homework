@@ -41,12 +41,12 @@ class TopLevelTag:
 
 class Tag:
     """Класс Tag"""
-    def __init__(self, tag, is_single=False, **attr):
+    def __init__(self, tag, is_single=False, klass=[], **attr):
         self.tag = tag
         self.html_code = ""
         self.text = ""
         self.attributes = attr
-        print(self.attributes)
+        self.klass = klass
         self.is_single = is_single
 
     def __enter__(self):
@@ -60,11 +60,16 @@ class Tag:
         return self
 
     def __str__(self):
-        attrs = []
+
+        if self.klass != []:
+            my_class = "class=\"{}\"".format(" ".join(self.klass))
+        else:
+            my_class = ""
+
+        attrs = [my_class]
         for attribute, value in self.attributes.items():
             attrs.append('%s="%s"' % (attribute, value))
         attrs = " ".join(attrs)
-        # Решить вопрос с классами
 
         if self.is_single == True:
             result_html = "<{tag} {attrs}/>\n".format(tag=self.tag, attrs=attrs, text=self.text, html_code=self.html_code)
@@ -73,7 +78,7 @@ class Tag:
         return result_html
 
 
-# Исходник
+# Генерация HTML файла
 
 with HTML(output="test.html") as doc:
     with TopLevelTag("head") as head:
